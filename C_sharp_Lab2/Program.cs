@@ -33,31 +33,77 @@ namespace C_sharp_Lab2
 
         static void Main(string[] args)
         {
-            Console.Write("Введите начальное значение X0:");
+            Console.Write("Введите начальное значение X0 (-1<X0<1):");
             double X0 = double.Parse(Console.ReadLine());
 
-            Console.Write("Введите конечное значение Xn:");
+            Console.Write("Введите конечное значение Xn (-1<Xn<1):");
             double Xn = double.Parse(Console.ReadLine());
 
             Console.Write("Введите шаг h:");
             double h = double.Parse(Console.ReadLine());
 
-            Console.Write("Введите шаг eps:");
+            Console.Write("Введите точность eps:");
             double eps = double.Parse(Console.ReadLine());
 
-            Console.WriteLine($"\n{"x",18} | {"f(x) вычисленное",16} | {"f(x) по формуле",16} |");
-            Console.WriteLine("-----------------------------------------------");
+            string xRow = $"{"x:",-20}";
+            string calculatedRow = "f(x) вычисленное: ";
+            string exactRow = "f(x) по формуле:  ";
 
-            for (double x = X0; x <= Xn; x += h)
+            int counter = 0;
+            const int valuesPerRow = 5;
+            double tailorVal = 0;
+            double exactVal = 0;
+            double lastX = X0;
+
+            for (double x = X0; x < Xn; x += h)
             {
-                double tailorVal = tailorValue(x, eps);
+                tailorVal = tailorValue(x, eps);
+                exactVal = exactValue(x);
+                lastX = x;
 
-                double exactVal = exactValue(x);
 
-                Console.WriteLine($"| {x,16:F10} | {tailorVal,16:F10} | {exactVal,16:F10} |");
+                xRow += $"{x,-14:F5} ";
+                calculatedRow += $"{tailorVal,14:F10} ";
+                exactRow += $"{exactVal,14:F10} ";
+                counter++;
+
+                if (counter % valuesPerRow == 0)
+                {
+                    Console.WriteLine(xRow);
+                    Console.WriteLine(calculatedRow);
+                    Console.WriteLine(exactRow);
+                    Console.WriteLine();
+
+                    xRow = $"{"x:",-20}";
+                    calculatedRow = "f(x) вычисленное: ";
+                    exactRow = "f(x) по формуле:  ";
+                }
             }
 
+            if (lastX+eps < Xn)
+            {
+                tailorVal = tailorValue(Xn, eps);
+                exactVal = exactValue(Xn);
 
+                // Добавляем последние значения
+                xRow += $"{Xn,-14:F5} ";
+                calculatedRow += $"{tailorVal,14:F10} ";
+                exactRow += $"{exactVal,14:F10} ";
+                counter++;
+            }
+
+            if (counter % valuesPerRow != 0)
+            {
+                Console.WriteLine(xRow);
+                Console.WriteLine(calculatedRow);
+                Console.WriteLine(exactRow);
+            }
+
+            Console.ReadKey();
         }
     }
 }
+
+
+
+
